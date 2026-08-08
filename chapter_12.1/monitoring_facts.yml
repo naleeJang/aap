@@ -1,0 +1,35 @@
+---
+
+- hosts: tnode
+  vars:
+    log_directory: /var/log/daily_check
+
+  tasks:
+    - name: Print system info
+      ansible.builtin.debug:
+        msg:
+        - "################ Start #####################"
+        - "Date: {{ ansible_facts.date_time.date }} {{ ansible_facts.date_time.time }}" 
+        - "HostName: {{ ansible_facts.hostname }}"
+        - "OS: {{ ansible_facts.distribution }}"
+        - "OS Version: {{ ansible_facts.distribution_version }}"
+        - "OS Kernel: {{ ansible_facts.kernel }}"
+        - "CPU Cores: {{ ansible_facts.processor_vcpus }}"
+        - "Memory: {{ ansible_facts.memory_mb.real }}"
+        - "Interfaces: {{ ansible_facts.interfaces }}"
+        - "IPv4: {{ ansible_facts.all_ipv4_addresses }}"
+        - "Devices: {{ ansible_facts.mounts }}"
+        - "################# End #######################" 
+      register: result
+
+    - name: Create log directory
+      ansible.builtin.file:
+        path: "{{ log_directory }}"
+        state: directory
+
+    - name: Print logs to log file
+      ansible.builtin.shell: |
+        echo "{{ item }}" >> "{{ log_directory }}"/system_info.logs
+      loop: "{{ result.msg }}"
+
+
