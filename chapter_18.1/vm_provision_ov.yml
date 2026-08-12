@@ -31,7 +31,7 @@
                   - ReadWriteMany
                 resources:
                   requests:
-                    storage: 50Gi
+                    storage: "{{ bootable_volume_size }}"
                 storageClassName: nfs-storage
                 volumeMode: Filesystem
                 
@@ -41,14 +41,13 @@
             devices:
               # 네트워크 인터페이스 연결
               interfaces:
-                - name: "{{ nic_name }}"
-                  bridge: {}
+                - name: default
+                  masquerade: {}
                   model: virtio
           # Pod 기본 네트워크 할당
           networks:
-            - name: "{{ nic_name }}"
-              multus: 
-                networkName: "{{ nad_name }}"
+            - name: default
+              pod: {}
           # 디스크 및 Cloud-Init 데이터 매핑
           volumes:
             - name: rootdisk
