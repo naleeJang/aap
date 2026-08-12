@@ -1,0 +1,70 @@
+---
+- name: Provision VM on OpenShift Virtualization
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create a Virtual Machine using Instancetype and Preference
+      redhat.openshift_virtualization.kubevirt_vm:
+        state: present
+        name: "{{ vm_name }}"
+        namespace: "{{ namespace_name }}"
+        labels:
+          app: "{{ vm_name }}"
+          
+        # 1. 인스턴스 타입 및 운영체제 프로필 지정 (하드웨어 상세 명세 생략)
+        instancetype:
+          name: "{{ instance_type }}"
+        preference:
+          name: "{{ preference_name }}"
+          
+        # 2. 데이터 볼륨 템플릿 (PVC 기반 OS 이미지 복제)
+        data_volume_templates:
+          - metadata:
+              name: "dv-rootdisk-{{ vm_name }}"
+            spec:
+              source:
+                pvc:
+                  name: "{{ bootable_volume_name }}"
+                  namespace: "openshift-virtualization-os-images"
+              storage:
+                accessModes:
+                  - ReadWriteMany
+                resources:
+                  requests:
+                    storage: 50Gi
+                storageClassName: nfs-storage
+                volumeMode: Filesystem
+                
+        # 3. 상세 스펙 정의 (네트워크 및 볼륨 매핑)
+        spec:
+          domain:
+            devices:
+              # 네트워크 인터페이스 연결
+              interfaces:
+                - name: "{{ nic_name }}"
+                  bridge: {}
+                  model: virtio
+          # Pod 기본 네트워크 할당
+          networks:
+            - name: "{{ nic_name }}"
+              multus: 
+                networkName: "{{ nad_name }}"
+          # 디스크 및 Cloud-Init 데이터 매핑
+          volumes:
+            - name: rootdisk
+              dataVolume:
+                name: "dv-rootdisk-{{ vm_name }}"
+            - name: cloudinitdisk
+              cloudInitNoCloud:
+                userData: |-
+                  #cloud-config
+                  user: cloud-user
+                  password: redhat
+                  chpasswd:
+                    expire: false
+        wait: true
+      register: vm_info
+
+    - name: Print VM information
+      ansible.builtin.debug:
+        var: vm_info
