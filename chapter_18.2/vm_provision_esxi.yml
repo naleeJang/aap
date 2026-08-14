@@ -33,6 +33,8 @@
         cdrom:
           - type: iso
             iso_path: "[datastore1] {{ iso_path }}"
+            controller_number: 0
+            unit_number: 0
       register: vm_info
 
     - name: Print VM information
