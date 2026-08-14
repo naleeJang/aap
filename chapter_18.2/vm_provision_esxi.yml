@@ -7,12 +7,12 @@
   tasks:
     - name: Create VM using datastore iso file
       community.vmware.vmware_guest:
-        validate_certs: false
         datacenter: "ha-datacenter"  # vCenter가 없는 ESXi 단독 환경의 고정 기본값
         name: "{{ vm_name }}"
-        state: poweredon             # 생성 후 즉시 전원 켜기
+        state: present             # 생성 후 즉시 전원 켜기
         guest_id: "{{ os_type }}"    # OS 유형
-        
+        folder: "vm"
+
         # 하드웨어 사양 정의
         hardware:
           memory_mb: "{{ memory_mib }}" 
