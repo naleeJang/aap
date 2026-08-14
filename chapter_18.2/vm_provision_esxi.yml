@@ -33,11 +33,20 @@
         cdrom:
           - type: iso
             iso_path: "[datastore1] {{ iso_path }}"
-            
-        boot_order: 
-          - cdrom 
       register: vm_info
 
     - name: Print VM information
       ansible.builtin.debug:
-        var: vm_info        
+        var: vm_info       
+
+    - name: Change boot order CD-ROM(ISO)
+      community.vmware.vmware_guest_boot_manager:
+        name: "{{ vm_name }}"
+        boot_order:
+          - cdrom                    # ★ CD-ROM을 부팅 1순위로 강제 지정
+
+    - name: Poweron VM 
+      community.vmware.vmware_guest:
+        datacenter: "ha-datacenter"
+        name: "{{ vm_name }}"
+        state: poweredon             # ★ 부팅 순서가 바뀐 채로 전원 가동
