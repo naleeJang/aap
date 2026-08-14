@@ -1,0 +1,41 @@
+---
+
+- name: Provision VM on vSphere ESXi
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create VM using datastore iso file
+      community.vmware.vmware_guest:
+        validate_certs: false
+        datacenter: "ha-datacenter"  # vCenter가 없는 ESXi 단독 환경의 고정 기본값
+        name: "{{ vm_name }}"
+        state: poweredon             # 생성 후 즉시 전원 켜기
+        guest_id: "{{ os_type }}"    # OS 유형
+        
+        # 하드웨어 사양 정의
+        hardware:
+          memory_mb: "{{ memory_mib }}" 
+          num_cpus: "{{ cpu_cnt }}"
+          scsi: paravirtual
+        
+        # 디스크 용량 설정
+        disk:
+          - size_gb: "{{ disk_size }}"
+            type: thin
+            datastore: "{{ datastore_name }}"
+        
+        # 네트워크 카드 설정
+        networks:
+          - name: "VM Network"       # ESXi의 포트그룹 이름
+        
+        # CD-ROM에 우분투 ISO 파일 마운트
+        cdrom:
+          - type: iso
+            iso_path: "[{{ datastore_name }}] {{ iso_path }}"
+            boot_order: true         # CD-ROM을 부팅 1순위로 지정
+      register: vm_info
+
+    - name: Print VM information
+      ansible.builtin.debug:
+        var: vm_info        
