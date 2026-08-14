@@ -33,7 +33,9 @@
         cdrom:
           - type: iso
             iso_path: "[datastore1] {{ iso_path }}"
-            boot_order: true         # CD-ROM을 부팅 1순위로 지정
+            
+        boot_order: 
+          - cdrom 
       register: vm_info
 
     - name: Print VM information

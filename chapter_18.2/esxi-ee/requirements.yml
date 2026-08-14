@@ -6,4 +6,4 @@
 # Job Template에서 해당 EE를 선택해야 한다.
 collections:
   - name: community.vmware
-    version: ">=3.0.0"
+    version: "5.7.0"

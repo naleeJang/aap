@@ -1,0 +1,22 @@
+---
+version: 3
+
+options:
+  package_manager_path: /usr/bin/microdnf
+
+dependencies:
+  galaxy: requirements.yml
+  python: requirements.txt
+  system: bindep.txt
+  ansible_core:
+    package_pip: ansible-core>=2.15.0
+  ansible_runner:
+    package_pip: ansible-runner>=2.3.0
+
+images:
+  base_image:
+    name: aap.example.com/ee-supported-rhel9:latest
+
+additional_build_steps:
+  prepend_base:
+    - RUN microdnf install -y python3-pip systemd-devel pkg-config gcc python3-devel openssl-devel && microdnf clean all
