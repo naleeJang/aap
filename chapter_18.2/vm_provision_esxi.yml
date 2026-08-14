@@ -32,7 +32,7 @@
         # CD-ROM에 우분투 ISO 파일 마운트
         cdrom:
           - type: iso
-            iso_path: "[{{ datastore_name }}] {{ iso_path }}"
+            iso_path: "[datastore1] {{ iso_path }}"
             boot_order: true         # CD-ROM을 부팅 1순위로 지정
       register: vm_info
 
