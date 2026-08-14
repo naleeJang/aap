@@ -1,0 +1,9 @@
+---
+# AAP 실행환경(Execution Environment)에 community.vmware 컬렉션과
+# pyvmomi 파이썬 패키지가 포함되어 있어야 한다.
+# 폐쇄망(air-gapped) 환경이라면 이 requirements.yml과 requirements.txt를
+# 기반으로 커스텀 EE를 빌드해 사설 레지스트리에 올려두고,
+# Job Template에서 해당 EE를 선택해야 한다.
+collections:
+  - name: community.vmware
+    version: ">=3.0.0"
