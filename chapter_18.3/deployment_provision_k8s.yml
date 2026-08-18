@@ -1,0 +1,36 @@
+---
+
+- hosts: localhost
+
+  tasks:
+  - name: Create a Deployment Nginx
+    kubernetes.core.k8s:
+      state: present
+      definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: "{{ deployment_name }}"
+          namespace: "{{ namespace }}"
+          labels:
+            app: "{{ application_label }}"
+        spec:
+          replicas: "{{ replica_cnt }}"
+          selector:
+            matchLabels:
+              app: "{{ application_label }}"
+          template:
+            metadata:
+              labels:
+                app: "{{ application_label }}"
+            spec:
+              containers:
+              - name: "{{ container_name }}"
+                image: "{{ container_image }}"
+                ports:
+                - containerPort: "{{ container_port }}"
+    register: my_deployment
+
+  - name: Print deployment information
+    ansible.builtin.debug:
+      vars: my_deployment 
