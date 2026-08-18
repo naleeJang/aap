@@ -14,7 +14,7 @@
         ovf: "{{ ovf_path }}" 
         name: "{{ vm_name }}"
         datastore: "{{ datastore_name }}"
-        network_mappings:
+        networks:
           "NAT Network": "VM Network"
         power_on: yes        
       register: vm_info
