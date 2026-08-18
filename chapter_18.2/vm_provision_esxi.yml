@@ -9,7 +9,6 @@
       community.vmware.vmware_deploy_ovf:
         esxi_hostname: "{{ esxi_ip }}"
         datacenter: "ha-datacenter" 
-        deployment_option: standard
 
         ovf: "{{ ovf_path }}" 
         name: "{{ vm_name }}"
