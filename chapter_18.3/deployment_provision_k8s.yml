@@ -33,4 +33,4 @@
 
   - name: Print deployment information
     ansible.builtin.debug:
-      vars: my_deployment 
+      msg: "{{ my_deployment }}"
