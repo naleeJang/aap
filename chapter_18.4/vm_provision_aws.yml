@@ -1,0 +1,20 @@
+---
+
+- hosts: localhost
+
+  tasks:
+    - name: Create ec2 vm
+      amazon.aws.ec2_instance:
+        name: "{{ vm_name }}"
+        image_id: "{{ image_id }}"
+        instance_type: "{{ instance_type }}"
+        key_name: "{{ key_name }}"
+        security_group: "{{ security_group }}"
+        network:
+          assign_public_ip: true
+        region: "{{ region_name }}"
+      register: vm_info
+
+    - name: Print vm information
+      ansible.builtin.debug:
+        var: vm_info
